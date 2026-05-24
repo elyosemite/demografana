@@ -16,7 +16,7 @@ otelcol.receiver.otlp "default" {
 // ── Processors
 otelcol.processor.memory_limiter "default" {
   check_interval         = "1s"
-  cur_mem_mib            = "40"
+  limit                  = "30MiB"
   output {
     metrics = [otelcol.processor.batch.default.input]
     logs    = [otelcol.processor.batch.default.input]
