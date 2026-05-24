@@ -14,16 +14,20 @@ common:
       rules_directory: /loki/rules
   replication_factor: 1
   ring:
+    instance_addr: 127.0.0.1
     kvstore:
       store: inmemory
 
 ingester:
   lifecycler:
+    address: 127.0.0.1
     availability_zone: zone-default
+    final_sleep: 0s
     ring:
       kvstore:
         store: inmemory
       replication_factor: 1
+      zone_awareness_enabled: false
 
 query_range:
   results_cache:

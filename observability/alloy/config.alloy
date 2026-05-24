@@ -7,20 +7,16 @@ otelcol.receiver.otlp "default" {
     endpoint = "0.0.0.0:4318"
   }
   output {
-    metrics = [otelcol.processor.memory_limiter.default.input]
     logs    = [otelcol.processor.memory_limiter.default.input]
-    traces  = [otelcol.processor.memory_limiter.default.input]
   }
 }
 
 // ── Processors
 otelcol.processor.memory_limiter "default" {
   check_interval         = "1s"
-  limit                  = "30MiB"
+  limit                  = "256MiB"
   output {
-    metrics = [otelcol.processor.batch.default.input]
     logs    = [otelcol.processor.batch.default.input]
-    traces  = [otelcol.processor.batch.default.input]
   }
 }
 
@@ -28,20 +24,7 @@ otelcol.processor.batch "default" {
   timeout         = "5s"
   send_batch_size = 1000
   output {
-    metrics = [otelcol.exporter.prometheus.default.input]
     logs    = [otelcol.exporter.otlphttp.loki.input]
-    traces  = [otelcol.exporter.otlp.tempo.input]
-  }
-}
-
-// ── Exporter: Metrics → Prometheus remote_write
-otelcol.exporter.prometheus "default" {
-  forward_to = [prometheus.remote_write.default.receiver]
-}
-
-prometheus.remote_write "default" {
-  endpoint {
-    url = "http://prometheus:9090/api/v1/write"
   }
 }
 
@@ -49,16 +32,6 @@ prometheus.remote_write "default" {
 otelcol.exporter.otlphttp "loki" {
   client {
     endpoint = "http://loki:3100/otlp"
-    tls {
-      insecure = true
-    }
-  }
-}
-
-// ── Exporter: Traces → Tempo via OTLP gRPC
-otelcol.exporter.otlp "tempo" {
-  client {
-    endpoint = "tempo:4317"
     tls {
       insecure = true
     }

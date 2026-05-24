@@ -9,7 +9,8 @@ internal static class OpenTelemetryExtensions
     internal static WebApplicationBuilder AddObservability(this WebApplicationBuilder builder)
     {
         var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]
-                       ?? "http://localhost:4317";
+                       ?? "http://alloy:4317";
+        Console.WriteLine($"OTLP Endpoint: {endpoint}");
 
         // Serilog substitui o ILogger padrão e exporta logs via OTLP.
         // TraceId/SpanId são capturados do Activity.Current automaticamente,

@@ -1,7 +1,24 @@
 services:
-  
+
+  demografana:
+    container_name: demografana
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "8080:8080"
+    networks:
+      - observability
+    depends_on:
+      - alloy
+    restart: unless-stopped
+
   alloy:
-    image: grafana/alloy:v1.3.1
+    container_name: alloy
+    image: grafana/alloy:v1.16.1
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
@@ -14,21 +31,27 @@ services:
       - "4317:4317"   # OTLP gRPC
       - "4318:4318"   # OTLP HTTP
       - "12345:12345" # Alloy UI
+    networks:
+      - observability
     depends_on:
       - loki
     restart: unless-stopped
 
   loki:
-    image: grafana/loki:3.1.0
+    container_name: loki
+    image: grafana/loki:3.7.2
     command: ["-config.file=/etc/loki/config.yaml"]
     volumes:
       - ./observability/loki/config.yaml:/etc/loki/config.yaml:ro
       - loki-data:/loki
     ports:
       - "3100:3100"
+    networks:
+      - observability
     restart: unless-stopped
 
   # tempo:
+  #   container_name: tempo
   #   image: grafana/tempo:2.5.0
   #   command: ["-config.file=/etc/tempo/tempo.yaml"]
   #   volumes:
@@ -37,9 +60,12 @@ services:
   #   ports:
   #     - "3200:3200"   # Tempo HTTP API
   #     - "4317"        # OTLP gRPC (interno — não exposto no host)
+  #   networks:
+  #     - observability
   #   restart: unless-stopped
 
   # prometheus:
+  #   container_name: prometheus
   #   image: prom/prometheus:v2.53.0
   #   command:
   #     - "--config.file=/etc/prometheus/prometheus.yml"
@@ -52,12 +78,15 @@ services:
   #     - prometheus-data:/prometheus
   #   ports:
   #     - "9090:9090"
+  #   networks:
+  #     - observability
   #   extra_hosts:
   #     - "host.docker.internal:host-gateway"
   #   restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:11.1.0
+    container_name: grafana
+    image: grafana/grafana:main-slim
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -68,9 +97,15 @@ services:
       - grafana-data:/var/lib/grafana
     ports:
       - "3000:3000"
+    networks:
+      - observability
     depends_on:
       - loki
     restart: unless-stopped
+
+networks:
+  observability:
+    name: observability
 
 volumes:
   alloy-data:
