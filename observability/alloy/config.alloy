@@ -1,4 +1,4 @@
-// ── Receiver OTLP
+// ── Receiver OTLP ─────────────────────────────────────────────────────────
 otelcol.receiver.otlp "default" {
   grpc {
     endpoint = "0.0.0.0:4317"
@@ -7,16 +7,18 @@ otelcol.receiver.otlp "default" {
     endpoint = "0.0.0.0:4318"
   }
   output {
-    logs    = [otelcol.processor.memory_limiter.default.input]
+    logs   = [otelcol.processor.memory_limiter.default.input]
+    traces = [otelcol.processor.memory_limiter.default.input]
   }
 }
 
-// ── Processors
+// ── Processors ────────────────────────────────────────────────────────────
 otelcol.processor.memory_limiter "default" {
-  check_interval         = "1s"
-  limit                  = "256MiB"
+  check_interval = "1s"
+  limit          = "256MiB"
   output {
-    logs    = [otelcol.processor.batch.default.input]
+    logs   = [otelcol.processor.batch.default.input]
+    traces = [otelcol.processor.batch.default.input]
   }
 }
 
@@ -24,14 +26,25 @@ otelcol.processor.batch "default" {
   timeout         = "5s"
   send_batch_size = 1000
   output {
-    logs    = [otelcol.exporter.otlphttp.loki.input]
+    logs   = [otelcol.exporter.otlphttp.loki.input]
+    traces = [otelcol.exporter.otlp.tempo.input]
   }
 }
 
-// ── Exporter: Logs → Loki via OTLP HTTP nativo
+// ── Exporter: Logs → Loki via OTLP HTTP ───────────────────────────────────
 otelcol.exporter.otlphttp "loki" {
   client {
     endpoint = "http://loki:3100/otlp"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+// ── Exporter: Traces → Tempo via OTLP gRPC ────────────────────────────────
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "http://tempo:4317"
     tls {
       insecure = true
     }

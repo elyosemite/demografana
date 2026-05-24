@@ -50,19 +50,18 @@ services:
       - observability
     restart: unless-stopped
 
-  # tempo:
-  #   container_name: tempo
-  #   image: grafana/tempo:2.5.0
-  #   command: ["-config.file=/etc/tempo/tempo.yaml"]
-  #   volumes:
-  #     - ./observability/tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
-  #     - tempo-data:/var/tempo
-  #   ports:
-  #     - "3200:3200"   # Tempo HTTP API
-  #     - "4317"        # OTLP gRPC (interno — não exposto no host)
-  #   networks:
-  #     - observability
-  #   restart: unless-stopped
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:2.5.0
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./observability/tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo HTTP API
+    networks:
+      - observability
+    restart: unless-stopped
 
   # prometheus:
   #   container_name: prometheus

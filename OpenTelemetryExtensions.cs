@@ -2,6 +2,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Debugging;
 using Serilog.Sinks.OpenTelemetry;
 
 internal static class OpenTelemetryExtensions
@@ -11,6 +12,7 @@ internal static class OpenTelemetryExtensions
         var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]
                        ?? "http://alloy:4317";
         Console.WriteLine($"OTLP Endpoint: {endpoint}");
+        SelfLog.Enable(msg => Console.Error.WriteLine($"[Serilog] {msg}"));
 
         // Serilog substitui o ILogger padrão e exporta logs via OTLP.
         // TraceId/SpanId são capturados do Activity.Current automaticamente,

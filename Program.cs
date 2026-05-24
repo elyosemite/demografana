@@ -17,7 +17,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
 
 app.MapGet("/orders", (GetOrdersUseCase useCase) =>
     Results.Ok(useCase.Execute()))
