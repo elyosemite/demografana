@@ -1,43 +1,7 @@
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-
-// ── OpenTelemetry ──────────────────────────────────────────────────────────
-var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]
-                   ?? "http://localhost:4317";
-
-var resourceBuilder = ResourceBuilder.CreateDefault()
-    .AddService(
-        serviceName: "demografana",
-        serviceNamespace: "local",
-        serviceVersion: "1.0.0");
-
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing
-        .SetResourceBuilder(resourceBuilder)
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint)))
-    .WithMetrics(metrics => metrics
-        .SetResourceBuilder(resourceBuilder)
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddRuntimeInstrumentation()
-        .AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint)));
-
-builder.Logging.AddOpenTelemetry(logging =>
-{
-    logging.SetResourceBuilder(resourceBuilder);
-    logging.AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint));
-    logging.IncludeFormattedMessage = true;
-    logging.IncludeScopes = true;
-});
-// ──────────────────────────────────────────────────────────────────────────
+builder.AddObservability();
 
 var app = builder.Build();
 
