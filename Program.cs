@@ -1,34 +1,32 @@
+using Scalar.AspNetCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.AddObservability();
 
+builder.Services.AddSingleton<OrderStore>();
+builder.Services.AddScoped<PlaceOrderUseCase>();
+builder.Services.AddScoped<GetOrdersUseCase>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
+{
     app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/orders", (GetOrdersUseCase useCase) =>
+    Results.Ok(useCase.Execute()))
+    .WithName("GetOrders");
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/orders", async (PlaceOrderRequest request, PlaceOrderUseCase useCase) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast(
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        )).ToArray();
-    return forecast;
-}).WithName("GetWeatherForecast");
+    var order = await useCase.ExecuteAsync(request);
+    return Results.Created($"/orders/{order.Id}", order);
+}).WithName("PlaceOrder");
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

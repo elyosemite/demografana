@@ -17,6 +17,14 @@ common:
     kvstore:
       store: inmemory
 
+ingester:
+  lifecycler:
+    availability_zone: zone-default
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+
 query_range:
   results_cache:
     cache:
@@ -39,11 +47,10 @@ ruler:
 
 limits_config:
   allow_structured_metadata: true
-
-otlp_config:
-  resource_attributes:
-    attributes_config:
-      - action: index_label
-        attributes:
-          - service.name
-          - service.namespace
+  otlp_config:
+    resource_attributes:
+      attributes_config:
+        - action: index_label
+          attributes:
+            - service.name
+            - service.namespace

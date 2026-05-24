@@ -1,4 +1,4 @@
-// ── Receiver OTLP ─────────────────────────────────────────────────────────
+// ── Receiver OTLP
 otelcol.receiver.otlp "default" {
   grpc {
     endpoint = "0.0.0.0:4317"
@@ -13,11 +13,10 @@ otelcol.receiver.otlp "default" {
   }
 }
 
-// ── Processors ────────────────────────────────────────────────────────────
+// ── Processors
 otelcol.processor.memory_limiter "default" {
   check_interval         = "1s"
-  limit_mib              = 256
-  spike_limit_mib        = 64
+  cur_mem_mib            = "40"
   output {
     metrics = [otelcol.processor.batch.default.input]
     logs    = [otelcol.processor.batch.default.input]
@@ -35,7 +34,7 @@ otelcol.processor.batch "default" {
   }
 }
 
-// ── Exporter: Metrics → Prometheus remote_write ───────────────────────────
+// ── Exporter: Metrics → Prometheus remote_write
 otelcol.exporter.prometheus "default" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
@@ -46,7 +45,7 @@ prometheus.remote_write "default" {
   }
 }
 
-// ── Exporter: Logs → Loki via OTLP HTTP nativo ────────────────────────────
+// ── Exporter: Logs → Loki via OTLP HTTP nativo
 otelcol.exporter.otlphttp "loki" {
   client {
     endpoint = "http://loki:3100/otlp"
@@ -56,7 +55,7 @@ otelcol.exporter.otlphttp "loki" {
   }
 }
 
-// ── Exporter: Traces → Tempo via OTLP gRPC ────────────────────────────────
+// ── Exporter: Traces → Tempo via OTLP gRPC
 otelcol.exporter.otlp "tempo" {
   client {
     endpoint = "tempo:4317"
