@@ -1,0 +1,6 @@
+@demografana_HostAddress = http://localhost:5067
+
+GET {{demografana_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

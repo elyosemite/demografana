@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Habilita remote_write para receber métricas do OTel Collector e do Tempo
+# (feature flag necessária — passada via --enable-feature=remote-write-receiver no compose)
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: otel-collector
+    static_configs:
+      - targets: ["otel-collector:8889"]
+
+  - job_name: demografana
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+    metrics_path: /metrics
