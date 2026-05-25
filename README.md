@@ -31,10 +31,20 @@ As imagens são publicadas automaticamente no GitHub Container Registry a cada p
 
 **1. Baixe as imagens:**
 
+Última versão estável:
+
 ```sh
-docker pull ghcr.io/elyosemite/demografana-api:latest
-docker pull ghcr.io/elyosemite/demografana-relay:latest
-docker pull ghcr.io/elyosemite/demografana-worker:latest
+docker pull ghcr.io/elyosemite/demografana/api:latest
+docker pull ghcr.io/elyosemite/demografana/relay:latest
+docker pull ghcr.io/elyosemite/demografana/worker:latest
+```
+
+Ou uma versão específica:
+
+```sh
+docker pull ghcr.io/elyosemite/demografana/api:v1.4.5
+docker pull ghcr.io/elyosemite/demografana/relay:v1.4.5
+docker pull ghcr.io/elyosemite/demografana/worker:v1.4.5
 ```
 
 **2. Baixe o `docker-compose.yml`:**
