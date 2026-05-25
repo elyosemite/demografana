@@ -1,3 +1,4 @@
+using Demografana.Core.Infrastructure;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Resources;
@@ -40,6 +41,8 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
     {
+        cfg.MessageTopology.SetEntityNameFormatter(new SimpleNameEntityFormatter());
+
         cfg.Host(builder.Configuration["RabbitMq:Host"] ?? "localhost", "/", h =>
         {
             h.Username(builder.Configuration["RabbitMq:Username"] ?? "guest");
