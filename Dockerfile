@@ -12,6 +12,10 @@ RUN dotnet publish demografana.Api/demografana.Api.csproj -c Release -o /app/api
 RUN dotnet publish demografana.Relay/demografana.Relay.csproj -c Release -o /app/relay --no-restore
 RUN dotnet publish demografana.Worker/demografana.Worker.csproj -c Release -o /app/worker --no-restore
 
+FROM base AS migrator
+COPY --from=build /app/api .
+ENTRYPOINT ["dotnet", "demografana.Api.dll", "--migrate-only"]
+
 FROM base AS api
 COPY --from=build /app/api .
 EXPOSE 8080

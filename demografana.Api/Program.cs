@@ -35,10 +35,12 @@ builder.Services.AddMassTransit(x =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+if (args.Contains("--migrate-only"))
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
+    return;
 }
 
 if (app.Environment.IsDevelopment())
