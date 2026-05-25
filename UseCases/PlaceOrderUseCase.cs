@@ -1,6 +1,6 @@
-sealed class PlaceOrderUseCase(OrderStore store, ILogger<PlaceOrderUseCase> logger)
+sealed class PlaceOrderUseCase(AppDbContext db, ILogger<PlaceOrderUseCase> logger)
 {
-    public Task<Order> ExecuteAsync(PlaceOrderRequest request)
+    public async Task<Order> ExecuteAsync(PlaceOrderRequest request)
     {
         logger.LogInformation(
             "Placing order for customer {CustomerId} with {ItemCount} item(s)",
@@ -17,20 +17,23 @@ sealed class PlaceOrderUseCase(OrderStore store, ILogger<PlaceOrderUseCase> logg
 
         var total = request.Items.Sum(i => i.Quantity * i.UnitPrice);
 
-        var order = new Order(
-            Id: Guid.NewGuid(),
-            CustomerId: request.CustomerId,
-            Items: request.Items,
-            Total: total,
-            Status: "Pending",
-            CreatedAt: DateTimeOffset.UtcNow);
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            CustomerId = request.CustomerId,
+            Items = request.Items,
+            Total = total,
+            Status = "Pending",
+            CreatedAt = DateTimeOffset.UtcNow
+        };
 
-        store.Add(order);
+        db.Orders.Add(order);
+        await db.SaveChangesAsync();
 
         logger.LogInformation(
             "Order {OrderId} placed for customer {CustomerId} — {ItemCount} item(s), total {Total}",
             order.Id, order.CustomerId, order.Items.Count, order.Total);
 
-        return Task.FromResult(order);
+        return order;
     }
 }
