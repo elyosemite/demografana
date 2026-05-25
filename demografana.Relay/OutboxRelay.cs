@@ -41,7 +41,7 @@ public class OutboxRelay(IServiceScopeFactory scopeFactory, IBus bus, ILogger<Ou
 
         if (pending.Count == 0) return;
 
-        logger.LogDebug("Publishing {Count} event(s) to RabbitMQ", pending.Count);
+        logger.LogInformation("Publishing {Count} event(s) to RabbitMQ", pending.Count);
 
         foreach (var record in pending)
         {
@@ -80,3 +80,4 @@ public class OutboxRelay(IServiceScopeFactory scopeFactory, IBus bus, ILogger<Ou
         System.Text.Json.JsonSerializer.Deserialize<T>(record.Payload,
             new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase })!;
 }
+

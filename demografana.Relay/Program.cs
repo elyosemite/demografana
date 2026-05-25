@@ -8,6 +8,8 @@ using Serilog.Sinks.OpenTelemetry;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Logging.ClearProviders();
+
 var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://alloy:4317";
 
 builder.Services.AddSerilog((services, cfg) => cfg
