@@ -1,3 +1,5 @@
+namespace Demografana.Core.Domain.Events;
+
 public record OrderConfirmed(
     Guid OrderId,
     int Version,

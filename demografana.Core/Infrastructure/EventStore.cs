@@ -1,3 +1,4 @@
+using Demografana.Core.Domain.Events;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 

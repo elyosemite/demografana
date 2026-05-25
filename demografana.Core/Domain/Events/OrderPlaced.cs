@@ -1,3 +1,5 @@
+namespace Demografana.Core.Domain.Events;
+
 public record OrderPlaced(
     Guid OrderId,
     int Version,

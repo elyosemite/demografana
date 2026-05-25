@@ -1,3 +1,4 @@
+using Demografana.Core.Domain.Events;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 

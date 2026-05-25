@@ -1,3 +1,5 @@
+using Demografana.Core.Domain.Events;
+
 public class Order
 {
     public Guid Id { get; private set; }
