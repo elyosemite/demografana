@@ -1,4 +1,7 @@
-sealed class GetOrdersUseCase(OrderStore store)
+using Microsoft.EntityFrameworkCore;
+
+sealed class GetOrdersUseCase(AppDbContext db)
 {
-    public IReadOnlyList<Order> Execute() => store.All();
+    public async Task<List<Order>> ExecuteAsync() =>
+        await db.Orders.ToListAsync();
 }
