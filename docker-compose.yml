@@ -64,6 +64,20 @@ services:
       - alloy
     restart: unless-stopped
 
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6:/scripts
+    command: run /scripts/order-lifecycle.js
+    environment:
+      - API_URL=http://api:8080
+    networks:
+      - observability
+    depends_on:
+      - api
+    profiles:
+      - load-test
+
   postgres:
     container_name: postgres
     image: postgres:17-alpine
