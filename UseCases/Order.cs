@@ -1,20 +1,18 @@
-record Order(
-    Guid Id,
-    string CustomerId,
-    List<OrderItem> Items,
-    decimal Total,
-    string Status,
-    DateTimeOffset CreatedAt);
+public class Order
+{
+    public Guid Id { get; set; }
+    public string CustomerId { get; set; } = string.Empty;
+    public List<OrderItem> Items { get; set; } = [];
+    public decimal Total { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; set; }
+}
 
-record OrderItem(string ProductId, int Quantity, decimal UnitPrice);
+public class OrderItem
+{
+    public string ProductId { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+}
 
 record PlaceOrderRequest(string CustomerId, List<OrderItem> Items);
-
-sealed class OrderStore
-{
-    private readonly List<Order> _orders = [];
-
-    public IReadOnlyList<Order> All() => _orders.AsReadOnly();
-
-    public void Add(Order order) => _orders.Add(order);
-}
