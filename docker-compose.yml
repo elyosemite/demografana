@@ -8,12 +8,29 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=demografana;Username=postgres;Password=postgres
     ports:
       - "8080:8080"
     networks:
       - observability
     depends_on:
       - alloy
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres
+    image: postgres:18.4-trixie
+    environment:
+      - POSTGRES_DB=demografana
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - observability
     restart: unless-stopped
 
   alloy:
@@ -112,3 +129,4 @@ volumes:
   tempo-data:
   prometheus-data:
   grafana-data:
+  postgres-data:
