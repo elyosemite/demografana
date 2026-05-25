@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="demografana.Api/demografana.Api.csproj" />
+  <Project Path="demografana.Core/demografana.Core.csproj" />
+  <Project Path="demografana.Relay/demografana.Relay.csproj" />
+  <Project Path="demografana.Worker/demografana.Worker.csproj" />
+</Solution>
