@@ -22,7 +22,7 @@ services:
       migrator:
         condition: service_completed_successfully
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
       alloy:
         condition: service_started
     restart: unless-stopped
@@ -45,7 +45,7 @@ services:
       migrator:
         condition: service_completed_successfully
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
       alloy:
         condition: service_started
     restart: unless-stopped
@@ -68,7 +68,7 @@ services:
       migrator:
         condition: service_completed_successfully
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
       alloy:
         condition: service_started
     restart: unless-stopped
@@ -143,6 +143,11 @@ services:
     networks:
       - observability
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   alloy:
     container_name: alloy
