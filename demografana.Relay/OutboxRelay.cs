@@ -26,6 +26,8 @@ public class OutboxRelay(IServiceScopeFactory scopeFactory, IBus bus, ILogger<Ou
 
             await Task.Delay(500, ct);
         }
+
+        logger.LogInformation("Outbox Relay stopped");
     }
 
     private async Task ProcessBatchAsync(CancellationToken ct)
@@ -45,10 +47,18 @@ public class OutboxRelay(IServiceScopeFactory scopeFactory, IBus bus, ILogger<Ou
 
         foreach (var record in pending)
         {
+            logger.LogDebug("Publishing {EventType} for order {AggregateId} v{Version}",
+                record.EventType, record.AggregateId, record.Version);
+
             await PublishAsync(record, ct);
             record.PublishedAt = DateTimeOffset.UtcNow;
             await db.SaveChangesAsync(ct);
+
+            logger.LogDebug("Published {EventType} for order {AggregateId} v{Version}",
+                record.EventType, record.AggregateId, record.Version);
         }
+
+        logger.LogInformation("Batch of {Count} event(s) published", pending.Count);
     }
 
     private async Task PublishAsync(OrderEventRecord record, CancellationToken ct)
