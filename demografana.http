@@ -1,6 +1,15 @@
-@demografana_HostAddress = http://localhost:5067
+@demografana_HostAddress = http://localhost:8080
 
-GET {{demografana_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{demografana_HostAddress}}/orders
+Content-Type: application/json
 
-###
+{
+  "customerId": "customer-123",
+  "items": [
+    {
+      "productId": "1234",
+      "quantity": 12,
+      "unitPrice": 100.0
+    }
+  ]
+}
