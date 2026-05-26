@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<OrderEventRecord> OrderEvents => Set<OrderEventRecord>();
-    public DbSet<OrderProjection> Orders => Set<OrderProjection>();
+    public DbSet<OrderProjection> Orders => Set<OrderProjection>(); // Read Model
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
