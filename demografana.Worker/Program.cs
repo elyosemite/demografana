@@ -1,40 +1,10 @@
 using Demografana.Core.Infrastructure;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using Serilog;
-using Serilog.Sinks.OpenTelemetry;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Logging.ClearProviders();
-
-var endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://alloy:4317";
-
-builder.Services.AddSerilog((services, cfg) => cfg
-    .ReadFrom.Configuration(builder.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext()
-    .Enrich.WithThreadId()
-    .Enrich.WithMachineName()
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
-    .WriteTo.OpenTelemetry(o =>
-    {
-        o.Endpoint = endpoint;
-        o.Protocol = OtlpProtocol.Grpc;
-        o.ResourceAttributes = new Dictionary<string, object>
-        {
-            ["service.name"] = "demografana-worker",
-            ["service.namespace"] = "local",
-            ["service.version"] = "1.0.0"
-        };
-    }));
-
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("demografana-worker", "local", "1.0.0"))
-    .WithTracing(t => t
-        .AddOtlpExporter(o => o.Endpoint = new Uri(endpoint)));
+builder.AddObservability("demografana-worker");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
